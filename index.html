@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One sound. 1,000 translations.</title>
+    <meta name="description" content="A satirical map of how AI turns animal communication into human words. One vocalization, a thousand reductive labels. Explore what gets lost in translation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="app">
+        <header class="page-header">
+            <h1 class="page-title">One sound. <span class="page-title-number">1,000</span> translations.</h1>
+            <p class="page-tagline">We ran animal vocalizations through human categories. Does AI simplify them—or reduce them? Explore the map.</p>
+            <p class="page-instruction">Click or hover a dot to see one reductive label we assigned to the same signal.</p>
+            <div class="controls-hint" aria-label="How to use this map">
+                <span class="controls-hint-item">Drag to pan</span>
+                <span class="controls-hint-sep">·</span>
+                <span class="controls-hint-item">Scroll to zoom</span>
+                <span class="controls-hint-sep">·</span>
+                <span class="controls-hint-item">Click or hover a dot to see a translation</span>
+            </div>
+        </header>
+
+        <div class="main">
+            <div id="graph-container" class="graph-container particle-container"></div>
+            <aside id="detail-panel" class="detail-panel" aria-live="polite">
+                <p class="detail-placeholder" id="detailPlaceholder">Click or hover a dot to see how we translated it into human terms.</p>
+                <div class="detail-content" id="detailContent" hidden>
+                    <h2 class="detail-title" id="detailTitle"></h2>
+                    <p class="detail-human" id="detailHuman"></p>
+                    <p class="detail-reality" id="detailReality"></p>
+                </div>
+            </aside>
+        </div>
+
+        <footer class="page-footer">
+            <a href="#" class="about-link" id="aboutLink">About</a>
+            <div class="reveal" id="reveal">
+                This project is satire. We examine what happens when AI translates animal communication into human-understandable terms: one vocalization becomes hundreds of labels (emotion, alarm, greeting, hunger…). The map is a digital graphic of that reduction. Each
+                dot is a reductive translation; the center is the raw signal. The animals didn't confirm any of it. We flattened complexity into words. You decide: simplification or loss.
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/audio.js"></script>
+    <script src="js/assumptionData.js"></script>
+    <script src="js/particleField.js"></script>
+</body>
+
+</html>

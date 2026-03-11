@@ -1,0 +1,266 @@
+/* ==========================================================================
+   One sound. 1,000 translations — satirical map of AI reducing animal comms
+   ========================================================================== */
+
+:root {
+    --color-bg: #f5f3ef;
+    --color-card: #fff;
+    --color-text: #1a1a1a;
+    --color-muted: #6b6b6b;
+    --color-accent: #2d5a27;
+    --color-reveal-bg: #fff8e6;
+    --color-reveal-text: #5c4a00;
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+    --radius-card: 16px;
+    --radius-btn: 10px;
+    --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.25rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-header {
+    margin-bottom: 1.25rem;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem 0;
+    color: var(--color-text);
+    line-height: 1.2;
+}
+
+.page-title-number {
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-accent);
+}
+
+.page-tagline {
+    font-size: 0.95rem;
+    color: var(--color-text);
+    margin: 0 0 0.25rem 0;
+}
+
+.page-instruction {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin: 0;
+}
+
+.controls-hint {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+}
+
+.controls-hint-item {
+    white-space: nowrap;
+}
+
+.controls-hint-sep {
+    color: var(--color-muted);
+    opacity: 0.7;
+    user-select: none;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    gap: 1.5rem;
+    align-items: stretch;
+    min-height: 0;
+}
+
+@media (max-width: 700px) {
+    .main {
+        flex-direction: column;
+    }
+}
+
+.graph-container {
+    flex: 1;
+    min-height: 400px;
+    background: var(--color-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.particle-container {
+    position: relative;
+    cursor: grab;
+}
+
+.particle-container:active {
+    cursor: grabbing;
+}
+
+.particle-container canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+}
+
+.particle-tooltip {
+    position: fixed;
+    z-index: 1000;
+    max-width: 280px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-radius: 6px;
+    pointer-events: none;
+    display: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.graph-container .node-label {
+    letter-spacing: 0.02em;
+}
+
+.graph-container svg {
+    display: block;
+    cursor: grab;
+}
+
+.graph-container svg:active {
+    cursor: grabbing;
+}
+
+.detail-panel {
+    width: 280px;
+    min-width: 240px;
+    background: var(--color-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 1.25rem;
+    font-size: 0.9rem;
+}
+
+.detail-placeholder {
+    color: var(--color-muted);
+    margin: 0;
+    font-style: italic;
+}
+
+.detail-content {
+    margin: 0;
+}
+
+.detail-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    margin: 0 0 0.75rem 0;
+}
+
+.detail-label {
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+    color: var(--color-text);
+}
+
+.detail-reality-text {
+    margin: 0;
+    font-style: italic;
+    color: var(--color-reveal-text);
+}
+
+
+/* D3 graph */
+
+.node-group {
+    cursor: pointer;
+}
+
+.node-group .node {
+    transition: stroke 0.15s, stroke-width 0.15s;
+}
+
+.node-group:hover .node,
+.node-group.hover .node {
+    stroke: #1a1a1a;
+    stroke-width: 2.5;
+}
+
+.node-group.selected .node {
+    stroke: #1a1a1a;
+    stroke-width: 3;
+}
+
+.link-group {
+    cursor: pointer;
+}
+
+.link-group .link-visible {
+    transition: stroke-opacity 0.15s, stroke-width 0.15s;
+}
+
+.link-group:hover .link-visible,
+.link-group.highlight .link-visible {
+    stroke-opacity: 0.85;
+    stroke-width: 2.2;
+    stroke: #2d5a27;
+}
+
+.page-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.about-link {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--color-muted);
+}
+
+.about-link:hover {
+    color: var(--color-text);
+}
+
+.reveal {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--color-reveal-bg);
+    border-radius: var(--radius-btn);
+    font-size: 0.85rem;
+    color: var(--color-reveal-text);
+    display: none;
+}
+
+.reveal.is-visible {
+    display: block;
+}
