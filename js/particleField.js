@@ -49,6 +49,17 @@
     var dragStartPanY = 0;
     var hitThreshold = 0.06;
     var tooltipEl = null;
+    var touchStartX = 0;
+    var touchStartY = 0;
+    var touchStartPanX = 0;
+    var touchStartPanY = 0;
+    var touchMoved = false;
+    var pinchStartDistance = 0;
+    var pinchStartScale = 0;
+    var pinchCenterX = 0;
+    var pinchCenterY = 0;
+    var lastTapClientX = 0;
+    var lastTapClientY = 0;
 
     function getCanvasRect() {
         var rect = canvas.getBoundingClientRect();
@@ -64,12 +75,14 @@
         return { x: wx, y: wy };
     }
 
-    function findNodeAt(worldX, worldY) {
+    function findNodeAt(worldX, worldY, thresholdMult) {
+        var mult = thresholdMult || 1;
+        var soundRadius = hitThreshold * 1.5 * mult;
         var soundDist = Math.sqrt(worldX * worldX + worldY * worldY);
-        if (soundDist < hitThreshold * 1.5) return soundNode;
+        if (soundDist < soundRadius) return soundNode;
 
         var nearest = null;
-        var nearestDist = hitThreshold;
+        var nearestDist = hitThreshold * mult;
         for (var i = 0; i < nodes.length; i++) {
             var n = nodes[i];
             var dx = worldX - n.x;
@@ -263,12 +276,90 @@
         draw();
     }
 
+    function getTouchDistance(touches) {
+        var a = touches[0];
+        var b = touches[1];
+        return Math.sqrt(Math.pow(b.clientX - a.clientX, 2) + Math.pow(b.clientY - a.clientY, 2));
+    }
+
+    function onTouchStart(e) {
+        if (e.touches.length === 1) {
+            hoveredNode = null;
+            updateTooltip(null);
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchStartPanX = panX;
+            touchStartPanY = panY;
+            touchMoved = false;
+            lastTapClientX = touchStartX;
+            lastTapClientY = touchStartY;
+            draw();
+        } else if (e.touches.length === 2) {
+            touchMoved = true;
+            pinchStartDistance = getTouchDistance(e.touches);
+            pinchStartScale = scale;
+            pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        }
+    }
+
+    function onTouchMove(e) {
+        if (e.touches.length === 1) {
+            var dx = e.touches[0].clientX - touchStartX;
+            var dy = e.touches[0].clientY - touchStartY;
+            if (Math.abs(dx) + Math.abs(dy) > 6) touchMoved = true;
+            if (touchMoved) {
+                e.preventDefault();
+                panX = touchStartPanX + (e.touches[0].clientX - touchStartX);
+                panY = touchStartPanY + (e.touches[0].clientY - touchStartY);
+                lastTapClientX = e.touches[0].clientX;
+                lastTapClientY = e.touches[0].clientY;
+                draw();
+            }
+        } else if (e.touches.length === 2) {
+            e.preventDefault();
+            var dist = getTouchDistance(e.touches);
+            var factor = dist / pinchStartDistance;
+            var newScale = Math.min(maxScale, Math.max(minScale, pinchStartScale * factor));
+            var worldBefore = screenToWorld(pinchCenterX, pinchCenterY);
+            panX += worldBefore.x * (scale - newScale);
+            panY += worldBefore.y * (scale - newScale);
+            scale = newScale;
+            draw();
+        }
+    }
+
+    function onTouchEnd(e) {
+        if (e.touches.length > 0) return;
+        if (!touchMoved) {
+            var rect = getCanvasRect();
+            var clientX = lastTapClientX;
+            var clientY = lastTapClientY;
+            if (clientX >= rect.left && clientX <= rect.left + rect.width && clientY >= rect.top && clientY <= rect.top + rect.height) {
+                var world = screenToWorld(clientX, clientY);
+                var node = findNodeAt(world.x, world.y, 1.8);
+                if (node) {
+                    selectedNode = node;
+                    showNodeDetail(node);
+                } else {
+                    clearDetail();
+                }
+                draw();
+            }
+        }
+        touchMoved = false;
+    }
+
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mouseleave", onMouseLeave);
     canvas.addEventListener("mousedown", onMouseDown);
     canvas.addEventListener("mouseup", onMouseUp);
     canvas.addEventListener("mouseup", onMouseUp, true);
     canvas.addEventListener("wheel", onWheel, { passive: false });
+    canvas.addEventListener("touchstart", onTouchStart, { passive: true });
+    canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+    canvas.addEventListener("touchend", onTouchEnd, { passive: true });
+    canvas.addEventListener("touchcancel", onTouchEnd, { passive: true });
     canvas.addEventListener("click", function(e) {
         if (Math.abs(e.clientX - dragStartX) + Math.abs(e.clientY - dragStartY) < 4) {
             var world = screenToWorld(e.clientX, e.clientY);

@@ -22,19 +22,28 @@
     box-sizing: border-box;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     margin: 0;
     min-height: 100vh;
     font-family: var(--font-sans);
     background: var(--color-bg);
     color: var(--color-text);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .app {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1.25rem;
+    padding-left: max(1.25rem, env(safe-area-inset-left));
+    padding-right: max(1.25rem, env(safe-area-inset-right));
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
 }
@@ -90,6 +99,14 @@ body {
     user-select: none;
 }
 
+.controls-hint-zoom-mob {
+    display: none;
+}
+
+.controls-hint-zoom-desk {
+    display: inline;
+}
+
 .main {
     flex: 1;
     display: flex;
@@ -99,8 +116,89 @@ body {
 }
 
 @media (max-width: 700px) {
+    .app {
+        padding: 0.75rem 1rem;
+    }
+    .page-header {
+        margin-bottom: 1rem;
+    }
+    .page-title {
+        font-size: 1.25rem;
+    }
+    .page-title-number {
+        font-size: 1.5rem;
+    }
+    .page-tagline {
+        font-size: 0.9rem;
+    }
+    .page-instruction {
+        font-size: 0.8rem;
+    }
+    .controls-hint {
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+    }
+    .controls-hint-zoom-desk {
+        display: none;
+    }
+    .controls-hint-zoom-mob {
+        display: inline;
+    }
     .main {
         flex-direction: column;
+        gap: 1rem;
+    }
+    .graph-container {
+        min-height: min(50vh, 320px);
+        border-radius: var(--radius-btn);
+    }
+    .particle-container {
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    .particle-container canvas {
+        min-height: min(50vh, 320px);
+    }
+    .detail-panel {
+        width: 100%;
+        min-width: 0;
+        padding: 1rem;
+        font-size: 0.875rem;
+    }
+    .detail-title {
+        font-size: 0.7rem;
+    }
+    .page-footer {
+        margin-top: 1rem;
+    }
+    .about-link {
+        display: inline-block;
+        min-height: 44px;
+        line-height: 44px;
+        padding: 0 0.25rem;
+    }
+    .reveal {
+        padding: 0.875rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .app {
+        padding: 0.5rem 0.75rem;
+    }
+    .page-title {
+        font-size: 1.1rem;
+    }
+    .page-title-number {
+        font-size: 1.35rem;
+    }
+    .graph-container {
+        min-height: 280px;
+    }
+    .particle-container canvas {
+        min-height: 280px;
     }
 }
 
@@ -132,7 +230,7 @@ body {
 .particle-tooltip {
     position: fixed;
     z-index: 1000;
-    max-width: 280px;
+    max-width: min(280px, 85vw);
     padding: 0.4rem 0.6rem;
     font-size: 0.8rem;
     font-family: var(--font-sans);
