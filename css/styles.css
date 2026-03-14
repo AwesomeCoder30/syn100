@@ -362,3 +362,11 @@ body {
 .reveal.is-visible {
     display: block;
 }
+
+.reveal p {
+    margin: 0 0 0.75rem 0;
+}
+
+.reveal p:last-child {
+    margin-bottom: 0;
+}
